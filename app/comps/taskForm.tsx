@@ -9,15 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-
-interface Task {
-  title: string;
-  status: string;
-  priority: string;
-  startTime: string;
-  endTime: string;
-}
-
+import { Task } from "../pages/mainPage/page";
 interface TaskFormProps {
   isOpen: boolean;
   onClose: () => void;
@@ -27,6 +19,7 @@ interface TaskFormProps {
 
 export default function TaskForm({ isOpen, onClose, onSave, selectedTask }: TaskFormProps) {
   const [taskData, setTaskData] = useState({
+    _id: "",
     title: "",
     status: "pending",
     priority: "",
@@ -39,6 +32,7 @@ export default function TaskForm({ isOpen, onClose, onSave, selectedTask }: Task
       setTaskData(selectedTask);
     } else {
       setTaskData({
+        _id: "",
         title: "",
         status: "pending",
         priority: "",
@@ -48,7 +42,7 @@ export default function TaskForm({ isOpen, onClose, onSave, selectedTask }: Task
     }
   }, [selectedTask]);
 
-  const handleChange = (e:any) => {
+  const handleChange = (e: { target: { name: any; value: any; }; }) => {
     setTaskData({ ...taskData, [e.target.name]: e.target.value });
   };
 
@@ -67,7 +61,7 @@ export default function TaskForm({ isOpen, onClose, onSave, selectedTask }: Task
     onClose();
   };
 
-  const handleStatusChange = (checked:any) => {
+  const handleStatusChange = (checked: boolean) => {
     setTaskData({ ...taskData, status: checked ? "completed" : "pending" });
   };
 

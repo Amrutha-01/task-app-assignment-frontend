@@ -20,7 +20,7 @@ interface PendingTasksSummary {
   pendingTasksCount: number;
 }
 
-interface Task {
+export interface Task {
   _id: string;
   title: string;
   priority: string;
@@ -29,10 +29,17 @@ interface Task {
   endTime: string;
 }
 
+interface TaskFormProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (task: Task) => void;
+  selectedTask?: Task;
+}
+
 export default function Page() {
   const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_API_URL;
   
-  const [taskData, setTaskData] = useState<Object[]>([]);
+  const [taskData, setTaskData] = useState<Task[]>([]);
   const [pendingTasksSummary, setPendingTasksSummary] = useState<PendingTasksSummary | null>(null);
   const [openDelete, setOpenDelete] = useState(false);
   const [statusFilter, setStatusFilter] = useState("status");
@@ -64,8 +71,20 @@ export default function Page() {
         setTaskData(response.data.tasks);
       }
     }
-    catch(err: any){
-      console.error("Error:", err.response?.data || err.message || err);
+    catch(err){
+      if (axios.isAxiosError(err)) {
+        if (axios.isAxiosError(err)) {
+          if (axios.isAxiosError(err)) {
+            console.error("Error:", err.response?.data || err.message || err);
+          } else {
+            console.error("Error:", err);
+          }
+        } else {
+          console.error("Error:", err);
+        }
+      } else {
+        console.error("Error:", err);
+      }
     }
   }
 
@@ -82,9 +101,12 @@ export default function Page() {
         setSummaryData(response.data);
       }
     }
-    catch(err: any){
-      console.error("Error:", err.response?.data || err.message
-      || err);
+    catch(err){
+      if (axios.isAxiosError(err)) {
+        console.error("Error:", err.response?.data || err.message);
+      } else {
+        console.error("Error:", err);
+      }
     }
   }
 
@@ -109,12 +131,16 @@ export default function Page() {
         window.location.href = "/";
       }
     }
-    catch(err: any){
-      console.error("Error:", err.response?.data || err.message || err);
+    catch(err){
+      if (axios.isAxiosError(err)) {
+        console.error("Error:", err.response?.data || err.message);
+      } else {
+        console.error("Error:", err);
+      }
     }
   }
 
-  const addTask = async(task: any) => {
+  const addTask = async(task: Task) => {
     try{
       const res = await fetch(`${API_BASE_URL}/tasks/add-task`, {
         method: "POST",
@@ -130,12 +156,16 @@ export default function Page() {
         setTaskData([...taskData, task]);
       }
     }
-    catch(err: any){
-      console.error("Error:", err.response?.data || err.message || err);
+    catch(err){
+      if (axios.isAxiosError(err)) {
+        console.error("Error:", err.response?.data || err.message);
+      } else {
+        console.error("Error:", err);
+      }
     }
   }
 
-  const editTask = async (task: any) => {
+  const editTask = async (task: Task) => {
     try {
       console.log(task)
       const res = await axios.put(`${API_BASE_URL}/tasks/update-task`, task, {
@@ -149,13 +179,17 @@ export default function Page() {
       if (res) {
         console.log("Task Updated:");
         setTaskData(
-          taskData.map((item: any) =>
+          taskData.map((item) =>
             item._id === task._id ? { ...item, ...task } : item
           )
         )
       }
-    } catch (err: any) {
-      console.error("Error:", err.response?.data || err.message || err);
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        console.error("Error:", err.response?.data || err.message);
+      } else {
+        console.error("Error:", err);
+      }
     }
   };
 
@@ -168,12 +202,16 @@ export default function Page() {
         },
       });
       if (res){
-        setTaskData(taskData.filter((item: any) => item._id !== selectedTask?._id));
+        setTaskData(taskData.filter((item) => item._id !== selectedTask?._id));
         setOpenDelete(false);
       }
     }
-    catch(err: any){
-      console.error("Error:", err.response?.data || err.message || err);
+    catch(err){
+      if (axios.isAxiosError(err)) {
+        console.error("Error:", err.response?.data || err.message);
+      } else {
+        console.error("Error:", err);
+      }
     }
   }
 
@@ -189,8 +227,12 @@ export default function Page() {
         setPendingTasksSummary(res.data);
       }
     }
-    catch(err: any){
-      console.error("Error:", err.response?.data || err.message || err);
+    catch(err){
+      if (axios.isAxiosError(err)) {
+        console.error("Error:", err.response?.data || err.message);
+      } else {
+        console.error("Error:", err);
+      }
     }
   }
 
@@ -203,20 +245,17 @@ export default function Page() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | undefined>(undefined);
 
-  // Open modal for Add Task
   const handleAddTask = () => {
     setSelectedTask(undefined);
     setIsModalOpen(true);
   };
 
-  // Open modal for Edit Task
-  const handleEditTask = (task: any) => {
+  const handleEditTask = (task: Task) => {
     setSelectedTask(task);
     setIsModalOpen(true);
   };
 
-  // Save Task
-  const handleSaveTask = (task: any) => {
+  const handleSaveTask = (task: Task) => {
     if (selectedTask) {
       editTask(task);
     } else {
@@ -477,7 +516,7 @@ export default function Page() {
 
                 <TableBody>
                   {taskData &&
-                    taskData?.map((task: any, itemId) => (
+                    taskData?.map((task: Task, itemId) => (
                       <TableRow key={itemId}>
                         <TableCell>{itemId + 1}</TableCell>
                         <TableCell>{task.title}</TableCell>
