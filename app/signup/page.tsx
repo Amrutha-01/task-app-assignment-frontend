@@ -29,9 +29,13 @@ export default function Signup() {
       console.log("Signup Success:", response.data);
       alert("Signup successful!");
 
-    } catch (err: any) {
-      console.error("Signup Error:", err.response?.data || err.message);
-      setError(err.response?.data?.message || "Something went wrong");
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        console.error("Signup Error:", err.response?.data || err.message);
+        setError(err.response?.data?.message || "Something went wrong");
+      } else {
+        console.error("Signup Error:", err);
+      }      
     } finally {
       setLoading(false);
     }

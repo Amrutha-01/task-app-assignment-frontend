@@ -13,14 +13,12 @@ export default function Signin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_API_URL;
 
   const handleSignin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
 
     try {
       const response = await axios.post(`${API_BASE_URL}/auth/login`, {
@@ -32,9 +30,12 @@ export default function Signin() {
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("userId", response.data.id);
       router.push("/pages/mainPage");
-    } catch (err: any) {
-      console.error("Signup Error:", err.response?.data || err.message);
-      setError(err.response?.data?.message || "Something went wrong");
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        console.error("Signup Error:", err.response?.data || err.message);
+      } else {
+        console.error("Signup Error:", err);
+      }
     } finally {
       setLoading(false);
     }

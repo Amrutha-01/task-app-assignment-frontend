@@ -42,7 +42,14 @@ export default function TaskForm({ isOpen, onClose, onSave, selectedTask }: Task
     }
   }, [selectedTask]);
 
-  const handleChange = (e: { target: { name: any; value: any; }; }) => {
+  interface HandleChangeEvent {
+    target: {
+      name: string;
+      value: string;
+    };
+  }
+
+  const handleChange = (e: HandleChangeEvent) => {
     setTaskData({ ...taskData, [e.target.name]: e.target.value });
   };
 

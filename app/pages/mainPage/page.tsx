@@ -6,11 +6,10 @@ import axios from "axios";
 import { Button } from "@/components/ui/button";
 import TaskForm from "@/app/comps/taskForm";
 import { Dialog, DialogTrigger, DialogContent, DialogFooter, DialogTitle } from "@/components/ui/dialog";
-import { get } from "http";
 
 interface PendingTasksSummary {
   pendingTasks: {
-    title: String;
+    title: string;
     priority: string;
     startTime: string;
     endTime: string;
@@ -27,13 +26,6 @@ export interface Task {
   status: string;
   startTime: string;
   endTime: string;
-}
-
-interface TaskFormProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSave: (task: Task) => void;
-  selectedTask?: Task;
 }
 
 export default function Page() {
